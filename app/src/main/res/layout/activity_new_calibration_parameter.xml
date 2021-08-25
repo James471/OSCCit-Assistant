@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewCalibrationParameterActivity">
+
+    <ProgressBar
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/saveCalibParamProgressBar"
+        android:indeterminate="true"
+        android:visibility="gone"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/cameraGalleryFABLayout"
+        android:visibility="visible">
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/FABCamera"
+            android:layout_alignParentEnd="true"
+            android:layout_above="@+id/FABGallery"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:contentDescription="@string/contentDescSelectCameraButton"
+            app:srcCompat="@android:drawable/ic_menu_camera"
+            android:layout_alignParentRight="true" />
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/FABGallery"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:contentDescription="@string/selectGalleryButton"
+            app:srcCompat="@android:drawable/ic_menu_gallery"
+            android:layout_alignParentRight="true" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:orientation="vertical"
+        android:id="@+id/cropViewLayout">
+
+        <com.canhub.cropper.CropImageView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight=".8"
+            android:layout_margin="5dp"
+            android:id="@+id/calibrationCropImageView"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:enabled="false"
+            android:id="@+id/btnSaveParam"
+            android:layout_margin="5dp"
+            android:padding="5dp"
+            android:text="@string/btnTextSave"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

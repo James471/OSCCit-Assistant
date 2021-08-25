@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">iGEM Cancer Detection App</string>
+    <string name="contentDescPlusFAB">Analyse Sample</string>
+    <string name="txtClearCalibParams">Clear All Calibration Parameters</string>
+    <string name="txtGetImgFromCamera">Open Camera</string>
+    <string name="txtGetImgFromGallery">Open Gallery</string>
+    <string name="btnTextChooseParam">Choose Calibration Parameter</string>
+    <string name="btnTextShowResults">Analyse</string>
+    <string name="btnTextCreateNew">Create New</string>
+    <string name="txtChooseCalibrationParam">Pick a Calibration Parameter</string>
+    <string name="contentDescSelectCameraButton">Open Camera</string>
+    <string name="selectGalleryButton">Open Gallery</string>
+    <string name="btnTextSave">Save</string>
+    <string name="txtChooseName">Give a name to your calibration parameter</string>
+    <string name="chooseNameHint">Name of the parameter</string>
+</resources>
