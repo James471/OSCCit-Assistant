@@ -6,44 +6,81 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import androidx.exifinterface.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.ParcelFileDescriptor;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
-import com.canhub.cropper.CropImageContract;
-import com.canhub.cropper.CropImageContractOptions;
-import com.canhub.cropper.CropImageView;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 
+import java.io.FileDescriptor;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommenceAnalysisActivity extends AppCompatActivity implements CropImageView.OnCropImageCompleteListener, CropImageView.OnSetImageUriCompleteListener, AdapterView.OnItemSelectedListener {
+public class CommenceAnalysisActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
-    CropImageView cropImageView;
+    ImageView imageView;
     Uri fullImageUri;
+    Bitmap fullImage;
     Bitmap croppedImage;
     CalibrationParameter chosenParameter;
     CalibrationParameter[] parameters;
+    ProgressBar progressBar;
 
     ActivityResultLauncher<Intent> imagePickLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
         if(activityResult.getResultCode() == Activity.RESULT_OK) {
             Intent resultData = activityResult.getData();
             if (resultData != null) {
                 fullImageUri = resultData.getData();
-                cropImageView.setImageUriAsync(fullImageUri);
+                try {
+                    progressBar.setVisibility(View.VISIBLE);
+                    fullImage = getBitmapFromUri(fullImageUri);
+                    Glide.with(getApplicationContext())
+                            .load(fullImageUri)
+                            .addListener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    Toast.makeText(getApplicationContext(), "Failed to load image. Try again.", Toast.LENGTH_LONG).show();
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    findViewById(R.id.chooseCalibParam).setEnabled(true);
+                                    findViewById(R.id.showResultsBtn).setEnabled(false);
+                                    return false;
+                                }
+                            })
+                            .into(imageView);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     });
@@ -60,13 +97,24 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
         }
     });
 
+    private Bitmap getBitmapFromUri(Uri uri) throws IOException {
+        ParcelFileDescriptor parcelFileDescriptor =
+                getContentResolver().openFileDescriptor(uri, "r");
+        FileDescriptor fileDescriptor = parcelFileDescriptor.getFileDescriptor();
+        Bitmap image = BitmapFactory.decodeFileDescriptor(fileDescriptor);
+        parcelFileDescriptor.close();
+        return image;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_commence_analysis);
-        cropImageView = findViewById(R.id.analysisCropImageView);
-        cropImageView.setOnCropImageCompleteListener(this);
-        cropImageView.setOnSetImageUriCompleteListener(this);
+
+        imageView = findViewById(R.id.analysisImageView);
+
+        progressBar = findViewById(R.id.analysingProgressBar);
 
         findViewById(R.id.btnGetImgFromCamera).setOnClickListener(view -> Toast.makeText(getApplicationContext(), "This doesn't do anything", Toast.LENGTH_LONG).show());
 
@@ -74,7 +122,7 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
 
         findViewById(R.id.chooseCalibParam).setOnClickListener(view -> showChooseCalibrationParameterDialog());
 
-        findViewById(R.id.showResultsBtn).setOnClickListener(view -> cropImageView.getCroppedImageAsync());
+        findViewById(R.id.showResultsBtn).setOnClickListener(view -> analyse());
     }
 
     @Override
@@ -100,6 +148,16 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
 
     }
 
+    protected int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
+            return 90;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
+            return 180;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
+            return 270;
+        return 0;
+    }
+
     protected void showChooseCalibrationParameterDialog() {
         parameters = CalibrationParameter.getAllCalibrationParameters(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.dilog_get_calibration_parameter, null);
@@ -118,11 +176,41 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
         builder.setView(customLayout);
         builder.setPositiveButton("Continue", (dialog, which) -> {
             if(chosenParameter!=null) {
-                findViewById(R.id.showResultsBtn).setEnabled(true);
-                Rect rect = chosenParameter.getCalibrationRectangle();
-                cropImageView.setCropRect(rect);
-                Rect rect1 = cropImageView.getCropRect();
-                dialog.dismiss();
+                progressBar.setVisibility(View.VISIBLE);
+                ExifInterface exifInterface;
+                try {
+                    InputStream inputStream = getContentResolver().openInputStream(fullImageUri);
+                    exifInterface = new ExifInterface(inputStream);
+                    int rotation = exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
+                    Rect rect = chosenParameter.getCalibrationRectangle();
+                    Matrix matrix = new Matrix();
+                    matrix.postRotate(rotation);
+                    fullImage = Bitmap.createScaledBitmap(fullImage, chosenParameter.getBitmapWidth(), chosenParameter.getBitmapHeight(), true);
+                    int deb = 10;
+                    croppedImage = Bitmap.createBitmap(fullImage, rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top, matrix, true);
+                    Glide.with(getApplicationContext())
+                            .load(croppedImage)
+                            .addListener(new RequestListener<Drawable>() {
+                                @Override
+                                public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    return false;
+                                }
+
+                                @Override
+                                public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                    progressBar.setVisibility(View.GONE);
+                                    findViewById(R.id.showResultsBtn).setEnabled(true);
+                                    return false;
+                                }
+                            })
+                            .into(imageView);
+                    dialog.dismiss();
+                } catch (IOException e) {
+                    progressBar.setVisibility(View.GONE);
+                    Toast.makeText(getApplicationContext(), "An error occurred.", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
             }
             else {
                 Toast.makeText(getApplicationContext(), "Choose a calibration parameter", Toast.LENGTH_LONG).show();
@@ -143,7 +231,6 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
     }
 
     protected void analyse() {
-        ProgressBar progressBar = findViewById(R.id.analysingProgressBar);
         progressBar.setVisibility(View.VISIBLE);
         Bitmap grayImage = Analysis.getGrayBitmap(croppedImage);
         float[] convolution = Analysis.getGrayBitmapConvolution(grayImage, chosenParameter.getDelX(), chosenParameter.getDelY());
@@ -158,19 +245,4 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements CropI
         startActivity(intent);
     }
 
-    @Override
-    public void onCropImageComplete(@NonNull CropImageView cropImageView, @NonNull CropImageView.CropResult cropResult) {
-        croppedImage = cropResult.getBitmap();
-        analyse();
-    }
-
-    @Override
-    public void onSetImageUriComplete(@NonNull CropImageView cropImageView, @NonNull Uri uri, Exception e) {
-        if(e!=null) {
-            Toast.makeText(getApplicationContext(), "Failed to get image. Try again!", Toast.LENGTH_LONG).show();
-            e.printStackTrace();
-        } else {
-            findViewById(R.id.chooseCalibParam).setEnabled(true);
-        }
-    }
 }
