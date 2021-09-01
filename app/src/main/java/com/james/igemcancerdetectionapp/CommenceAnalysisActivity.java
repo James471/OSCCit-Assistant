@@ -186,7 +186,6 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
                     Matrix matrix = new Matrix();
                     matrix.postRotate(rotation);
                     fullImage = Bitmap.createScaledBitmap(fullImage, chosenParameter.getBitmapWidth(), chosenParameter.getBitmapHeight(), true);
-                    int deb = 10;
                     croppedImage = Bitmap.createBitmap(fullImage, rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top, matrix, true);
                     Glide.with(getApplicationContext())
                             .load(croppedImage)
