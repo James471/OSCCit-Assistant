@@ -68,9 +68,6 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
         Button btnSaveParam = findViewById(R.id.btnSaveParam);
         btnSaveParam.setOnClickListener(v -> cropImageView.getCroppedImageAsync());
 
-        FloatingActionButton floatingActionButtonCamera = findViewById(R.id.FABCamera);
-        floatingActionButtonCamera.setOnClickListener(v -> Toast.makeText(getApplicationContext(), "Doesn't do anything. Sike!", Toast.LENGTH_LONG).show());
-
         FloatingActionButton floatingActionButtonGallery = findViewById(R.id.FABGallery);
         floatingActionButtonGallery.setOnClickListener(v -> {
             RelativeLayout FABRL = findViewById(R.id.cameraGalleryFABLayout);

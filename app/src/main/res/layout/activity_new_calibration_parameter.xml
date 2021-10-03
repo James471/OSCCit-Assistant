@@ -22,18 +22,6 @@
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/FABCamera"
-            android:layout_alignParentEnd="true"
-            android:layout_above="@+id/FABGallery"
-            android:layout_margin="5dp"
-            android:padding="5dp"
-            android:contentDescription="@string/contentDescSelectCameraButton"
-            app:srcCompat="@android:drawable/ic_menu_camera"
-            android:layout_alignParentRight="true" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:id="@+id/FABGallery"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="true"

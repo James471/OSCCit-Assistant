@@ -106,7 +106,6 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
         return image;
     }
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -115,8 +114,6 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
         imageView = findViewById(R.id.analysisImageView);
 
         progressBar = findViewById(R.id.analysingProgressBar);
-
-        findViewById(R.id.btnGetImgFromCamera).setOnClickListener(view -> Toast.makeText(getApplicationContext(), "This doesn't do anything", Toast.LENGTH_LONG).show());
 
         findViewById(R.id.btnGetImgFromGallery).setOnClickListener(view -> checkAndRequestStoragePermissions());
 
