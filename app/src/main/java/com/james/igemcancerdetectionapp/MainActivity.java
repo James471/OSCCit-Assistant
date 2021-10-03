@@ -36,8 +36,7 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.actionClearCalibParams) {
-            //TODO: Remove all calibration parameters from shared preferences
-            Toast.makeText(this, "To be done", Toast.LENGTH_LONG).show();
+            CalibrationParameter.removeAllCalibrationParameter(this);
             return true;
         }
 

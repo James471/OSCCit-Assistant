@@ -79,6 +79,11 @@ class CalibrationParameter {
         sharedPreferences.edit().putString("calibrationParams", parameters).apply();
     }
 
+    public static void removeAllCalibrationParameter(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+        sharedPreferences.edit().putString("calibrationParams", "").apply();
+    }
+
     public static CalibrationParameter[] getAllCalibrationParameters(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         String parameters = sharedPreferences.getString("calibrationParams", "");
