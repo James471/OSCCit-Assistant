@@ -99,10 +99,14 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
                 .setPositiveButton("Save", (dialog, which) -> {
                     EditText editText = customLayout.findViewById(R.id.edtTxtParameterName);
                     String parameterName = editText.getText().toString();
-                    if(calibrationParameterType.equals("IW"))
-                        storeIWCalibrationParameter(parameterName, cropResult);
-                    else if(calibrationParameterType.equals("IC"))
-                        storeICCalibrationParameter(parameterName, cropResult);
+                    if(!parameterName.isEmpty()) {
+                        if(calibrationParameterType.equals("IW"))
+                            storeIWCalibrationParameter(parameterName, cropResult);
+                        else if(calibrationParameterType.equals("IC"))
+                            storeICCalibrationParameter(parameterName, cropResult);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "Enter a parameter name", Toast.LENGTH_LONG).show();
+                    }
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     Toast.makeText(getApplicationContext(), "The parameter was not saved", Toast.LENGTH_LONG).show();

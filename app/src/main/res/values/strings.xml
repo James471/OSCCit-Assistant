@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">iGEM Cancer Detection App</string>
+    <string name="app_name">OSCCit Assistant</string>
     <string name="contentDescPlusFAB">Analyse Sample</string>
     <string name="txtClearCalibParams">Clear All Calibration Parameters</string>
     <string name="txtGetImgFromCamera">Open Camera</string>
