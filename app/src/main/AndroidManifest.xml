@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.james.igemcancerdetectionapp">
+    package="osccitassistant">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
@@ -10,17 +10,17 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.IGEMCancerDetectionApp">
+        android:theme="@style/Theme.OSCCitAssistant">
         <activity
-            android:name=".ICAnalysisResultsActivity"
+            android:name="com.james.osccitassistant.ICAnalysisResultsActivity"
             android:exported="true" />
         <activity
-            android:name=".CommenceICAnalysisActivity"
+            android:name="com.james.osccitassistant.CommenceICAnalysisActivity"
             android:exported="true" />
-        <activity android:name=".IWAnalysisResultsActivity" />
-        <activity android:name=".NewCalibrationParameterActivity" />
-        <activity android:name=".CommenceIWAnalysisActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name="com.james.osccitassistant.IWAnalysisResultsActivity" />
+        <activity android:name="com.james.osccitassistant.NewCalibrationParameterActivity" />
+        <activity android:name="com.james.osccitassistant.CommenceIWAnalysisActivity" />
+        <activity android:name="com.james.osccitassistant.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

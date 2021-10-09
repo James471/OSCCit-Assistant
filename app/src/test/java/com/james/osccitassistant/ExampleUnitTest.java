@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import org.junit.Test;
 

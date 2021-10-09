@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -27,6 +27,8 @@ import com.canhub.cropper.CropImageView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Objects;
+
+import osccitassistant.R;
 
 public class NewCalibrationParameterActivity extends AppCompatActivity implements CropImageView.OnSetImageUriCompleteListener, CropImageView.OnCropImageCompleteListener {
 

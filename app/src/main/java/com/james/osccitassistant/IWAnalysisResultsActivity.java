@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -12,6 +12,8 @@ import com.github.mikephil.charting.data.LineDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import osccitassistant.R;
 
 public class IWAnalysisResultsActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import android.content.Context;
 import android.content.SharedPreferences;

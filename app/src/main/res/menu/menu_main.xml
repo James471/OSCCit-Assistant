@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.james.cancerdetectionigem.MainActivity">
+    tools:context="com.james.osccitassistant.MainActivity">
     <item
         android:id="@+id/actionClearIntensityWavelengthCalibParams"
         android:orderInCategory="100"

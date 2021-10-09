@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import android.Manifest;
 import android.app.Activity;
@@ -42,6 +42,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import osccitassistant.R;
 
 public class CommenceIWAnalysisActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 

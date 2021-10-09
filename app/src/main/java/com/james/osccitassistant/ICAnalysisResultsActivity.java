@@ -1,4 +1,4 @@
-package com.james.igemcancerdetectionapp;
+package com.james.osccitassistant;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -17,6 +17,8 @@ import com.github.mikephil.charting.data.ScatterDataSet;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import osccitassistant.R;
 
 public class ICAnalysisResultsActivity extends AppCompatActivity {
 
