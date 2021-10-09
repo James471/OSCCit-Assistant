@@ -1,13 +1,14 @@
 package com.james.igemcancerdetectionapp;
 
+import static android.graphics.Color.red;
+
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 
 import androidx.core.util.Pair;
-
-import static android.graphics.Color.red;
+import androidx.exifinterface.media.ExifInterface;
 
 class Analysis {
 
@@ -27,16 +28,76 @@ class Analysis {
         return grayBitmap;
     }
 
+    public static float getGrayBitmapAverage(Bitmap grayBitmap) {
+        float average = 0;
+        int height = grayBitmap.getHeight();
+        int width = grayBitmap.getWidth();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                average += red(grayBitmap.getPixel(i, j));
+            }
+        }
+        average /= (height * width);
+        return average;
+    }
+
+    public static float[] getLinearFitParameters(float[] x, float[] y) {
+//        Returns a float array containing m, c, sigM, sigC in that order.
+        int N = x.length;
+        float sXY = 0.0f;
+        float sX = 0.0f;
+        float sY = 0.0f;
+        float sX2 = 0.0f;
+        float sigY = 0.0f;
+        float Delta;
+        for (int i = 0; i < N; i++) {
+            sXY += x[i] * y[i];
+            sX += x[i];
+            sY += y[i];
+            sX2 += x[i] * x[i];
+        }
+        Delta = N * sX2 - (sX * sX);
+        float m = (N * sXY - sX * sY) / Delta;
+        float c = (sX2 * sY - sX * sXY) / Delta;
+        for (int i = 0; i < N; i++) {
+            sigY += (y[i] - m * x[i] - c) * (y[i] - m * x[i] - c);
+        }
+        sigY = sigY / (N - 2);
+        sigY = (float) Math.sqrt(sigY);
+        float sigC = (float) (sigY * Math.sqrt(sX2 / Delta));
+        float sigM = (float) (sigY * Math.sqrt(N / Delta));
+        return new float[]{m, c, sigM, sigC};
+    }
+
+    public static float[] linearFunctionInverse(float m, float c, float sigM, float sigC, float y) {
+        float x;
+        float sigX;
+        x = (y - c) / m;
+        float temp = (y - c) * sigM / (m * m);
+        sigX = (float) Math.sqrt((sigC / m) * (sigC / m) + temp * temp);
+        return new float[]{x, sigX};
+    }
+
+    public static int exifToDegrees(int exifOrientation) {
+        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
+            return 90;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
+            return 180;
+        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
+            return 270;
+        return 0;
+    }
+
     public static float[] getGrayBitmapConvolution(Bitmap grayBitmap, int delX, int delY) {
-        int centre = grayBitmap.getHeight()/2;
-        int jLow = centre - (delY/2);
-        int jHigh = centre + (delY/2);
-        int size = grayBitmap.getWidth()/delX + 1;
+        int centre = grayBitmap.getHeight() / 2;
+        int jLow = centre - (delY / 2);
+        int jHigh = centre + (delY / 2);
+        int size = grayBitmap.getWidth() / delX + 1;
         float[] convolution = new float[size];
-        for(int i=0, index=0; i<grayBitmap.getWidth(); i+=delX, index++) {
+        for (int i = 0, index = 0; i < grayBitmap.getWidth(); i += delX, index++) {
             float temp = 0;
             int count = 0;
-            for(int j=jLow; j<jHigh; j++) {
+            for (int j = jLow; j < jHigh; j++) {
                 temp += red(grayBitmap.getPixel(i, j));
                 count += 1;
             }
@@ -49,20 +110,20 @@ class Analysis {
     public static Pair<Integer, Float> getMaxInRange(float[] array, int start, int end) {
         float max = 0;
         int index = 0;
-        for(int i=start; i<end; i++) {
-            if(array[i]>max) {
+        for (int i = start; i < end; i++) {
+            if (array[i] > max) {
                 max = array[i];
                 index = i;
             }
         }
-        return new Pair<>(index, (float)  max);
+        return new Pair<>(index, max);
     }
 
     public static float[] getXNorm(float x1, float x2, float w1, float w2, int xLen) {
         float[] xNorm = new float[xLen];
-        float m = (w2-w1)/(x2-x1);
-        for(int i=0; i<xLen; i++) {
-            xNorm[i] = m*(i-x1) + w1;
+        float m = (w2 - w1) / (x2 - x1);
+        for (int i = 0; i < xLen; i++) {
+            xNorm[i] = m * (i - x1) + w1;
         }
         return xNorm;
     }

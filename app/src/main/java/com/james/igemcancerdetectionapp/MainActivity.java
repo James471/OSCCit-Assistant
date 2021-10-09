@@ -6,20 +6,31 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
 import android.widget.Toast;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FloatingActionButton startFAB = findViewById(R.id.FABStart);
-        startFAB.setOnClickListener(v -> init());
-        
+        AdapterView.OnItemClickListener itemClickListener = (adapterView, view, i, l) -> {
+            if (i == 0) {
+                Intent intent = new Intent(MainActivity.this, CommenceIWAnalysisActivity.class);
+                startActivity(intent);
+            } else if (i == 1) {
+                Intent intent = new Intent(MainActivity.this, CommenceICAnalysisActivity.class);
+                startActivity(intent);
+            }
+        };
+        ListView listView = findViewById(R.id.list_view);
+        listView.setOnItemClickListener(itemClickListener);
+
     }
 
     @Override
@@ -35,17 +46,16 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.actionClearCalibParams) {
-            CalibrationParameter.removeAllCalibrationParameter(this);
+        if (id == R.id.actionClearIntensityWavelengthCalibParams) {
+            IWCalibrationParameter.removeIWAllCalibrationParameter(this);
+            Toast.makeText(this, "All Calibration Parameters Removed", Toast.LENGTH_SHORT).show();
             return true;
+        } else if (id == R.id.actionClearIntensityConcCalibParams) {
+            ICCalibrationParameter.removeICAllCalibrationParameter(this);
+            Toast.makeText(this, "All calibration parameters removed", Toast.LENGTH_LONG).show();
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    protected void init() {
-        Intent intent = new Intent(this, CommenceAnalysisActivity.class);
-        startActivity(intent);
     }
 
 }

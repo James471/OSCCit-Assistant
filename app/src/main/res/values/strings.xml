@@ -13,4 +13,19 @@
     <string name="btnTextSave">Save</string>
     <string name="txtChooseName">Give a name to your calibration parameter</string>
     <string name="chooseNameHint">Name of the parameter</string>
+    <string name="clear_all_i_c_calibration_parameters">Clear All I-C Calibration Parameters</string>
+    <string name="clear_all_i_lambda_calibration_parameters">Clear All I-Lambda Calibration Parameters</string>
+    <string name="choose_calibration_parameter">Choose Calibration Parameter</string>
+    <string name="add_images_of_known_sample_concentration">Add Images of Known Sample Concentration</string>
+    <string name="add_image_of_unknown_sample_concentration">Add Image of Unknown Sample Concentration</string>
+    <string name="get_unknown_concentration">Get Unknown Concentration</string>
+    <string name="add">Add</string>
+    <string name="concentration">Concentration</string>
+    <string name="intensity">Intensity</string>
+    <string name="here_s_what_we_got">Here\'s what we got</string>
+    <string name="analysing">Analysing...</string>
+    <string-array name="analysisTypeList">
+        <item>Spectrum Intensity Analyzer</item>
+        <item>Sample Concentration Analyzer</item>
+    </string-array>
 </resources>

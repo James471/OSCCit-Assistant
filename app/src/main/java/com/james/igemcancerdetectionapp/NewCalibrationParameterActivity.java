@@ -33,6 +33,7 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
     CropImageView cropImageView;
     Uri fullImageUri;
     Bitmap croppedImage;
+    String calibrationParameterType;
 
     ActivityResultLauncher<Intent> imagePickLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
         if(activityResult.getResultCode() == Activity.RESULT_OK) {
@@ -60,6 +61,9 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_calibration_parameter);
+
+        Intent intent = getIntent();
+        calibrationParameterType = intent.getStringExtra("type");
 
         cropImageView = findViewById(R.id.calibrationCropImageView);
         cropImageView.setOnSetImageUriCompleteListener(this);
@@ -95,7 +99,10 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
                 .setPositiveButton("Save", (dialog, which) -> {
                     EditText editText = customLayout.findViewById(R.id.edtTxtParameterName);
                     String parameterName = editText.getText().toString();
-                    storeCalibrationParameter(parameterName, cropResult);
+                    if(calibrationParameterType.equals("IW"))
+                        storeIWCalibrationParameter(parameterName, cropResult);
+                    else if(calibrationParameterType.equals("IC"))
+                        storeICCalibrationParameter(parameterName, cropResult);
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> {
                     Toast.makeText(getApplicationContext(), "The parameter was not saved", Toast.LENGTH_LONG).show();
@@ -114,7 +121,7 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
         }
     }
 
-    protected void storeCalibrationParameter(String parameterName, CropImageView.CropResult cropResult) {
+    protected void storeIWCalibrationParameter(String parameterName, CropImageView.CropResult cropResult) {
         ProgressBar progressBar = findViewById(R.id.saveCalibParamProgressBar);
         progressBar.setVisibility(View.VISIBLE);
         Bitmap grayImage = Analysis.getGrayBitmap(croppedImage);
@@ -124,8 +131,21 @@ public class NewCalibrationParameterActivity extends AppCompatActivity implement
         int originalWidth = Objects.requireNonNull(cropResult.getWholeImageRect()).right;
         int originalHeight = cropResult.getWholeImageRect().bottom;
         Rect calibrationRectangle = cropResult.getCropRect();
-        CalibrationParameter calibrationParameter = new CalibrationParameter(parameterName, calibrationRectangle, originalHeight, originalWidth, convolution, delX, delY);
-        CalibrationParameter.addCalibrationParameter(calibrationParameter, this);
+        IWCalibrationParameter iwCalibrationParameter = new IWCalibrationParameter(parameterName, calibrationRectangle, originalHeight, originalWidth, convolution, delX, delY);
+        IWCalibrationParameter.addIWCalibrationParameter(iwCalibrationParameter, this);
+        progressBar.setVisibility(View.VISIBLE);
+        Toast.makeText(getApplicationContext(), "Calibration Parameter saved.", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    protected void storeICCalibrationParameter(String parameterName, CropImageView.CropResult cropResult) {
+        ProgressBar progressBar = findViewById(R.id.saveCalibParamProgressBar);
+        progressBar.setVisibility((View.VISIBLE));
+        int originalWidth = Objects.requireNonNull(cropResult.getWholeImageRect()).right;
+        int originalHeight = cropResult.getWholeImageRect().bottom;
+        Rect calibrationRectangle = cropResult.getCropRect();
+        ICCalibrationParameter icCalibrationParameter = new ICCalibrationParameter(parameterName, calibrationRectangle, originalHeight, originalWidth);
+        ICCalibrationParameter.addICCalibrationParameter(icCalibrationParameter, this);
         progressBar.setVisibility(View.VISIBLE);
         Toast.makeText(getApplicationContext(), "Calibration Parameter saved.", Toast.LENGTH_LONG).show();
         finish();

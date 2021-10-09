@@ -11,9 +11,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.IGEMCancerDetectionApp">
-        <activity android:name=".AnalysisResultsActivity"></activity>
+        <activity
+            android:name=".ICAnalysisResultsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".CommenceICAnalysisActivity"
+            android:exported="true" />
+        <activity android:name=".IWAnalysisResultsActivity" />
         <activity android:name=".NewCalibrationParameterActivity" />
-        <activity android:name=".CommenceAnalysisActivity" />
+        <activity android:name=".CommenceIWAnalysisActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

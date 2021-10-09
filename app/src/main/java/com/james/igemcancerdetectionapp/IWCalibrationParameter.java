@@ -6,34 +6,23 @@ import android.graphics.Rect;
 
 import com.google.gson.Gson;
 
-class CalibrationParameter {
+class IWCalibrationParameter {
+
+    private static final String IW_CALIBRATION_PARAMETER = "INTENSITY_WAVELENGTH_CALIBRATION_PARAMETER";
 
     private final String name;
     private final Rect calibrationRectangle;
     private final int bitmapWidth;
     private final int bitmapHeight;
-    private final float rotationAngle;
     private final float[] calibrationArray;
     private final int delX;
     private final int delY;
 
-    public CalibrationParameter(String name, Rect rect, int height, int width, float[] convolution, int delX, int delY) {
+    public IWCalibrationParameter(String name, Rect rect, int height, int width, float[] convolution, int delX, int delY) {
         this.name = name;
         calibrationRectangle = rect;
         bitmapHeight = height;
         bitmapWidth = width;
-        rotationAngle = 0.0f;
-        calibrationArray = convolution;
-        this.delX = delX;
-        this.delY = delY;
-    }
-
-    public CalibrationParameter(String name, Rect rect, Float angle, int height, int width, float[] convolution, int delX, int delY) {
-        this.name = name;
-        calibrationRectangle = rect;
-        bitmapHeight = height;
-        bitmapWidth = width;
-        rotationAngle = angle;
         calibrationArray = convolution;
         this.delX = delX;
         this.delY = delY;
@@ -55,10 +44,6 @@ class CalibrationParameter {
         return  bitmapHeight;
     }
 
-    public float getRotationAngle() {
-        return rotationAngle;
-    }
-
     public float[] getCalibrationArray() {
         return calibrationArray;
     }
@@ -71,33 +56,33 @@ class CalibrationParameter {
         return delY;
     }
 
-    public static void addCalibrationParameter(CalibrationParameter calibrationParameter, Context context) {
+    public static void addIWCalibrationParameter(IWCalibrationParameter IWCalibrationParameter, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-        String parameters = sharedPreferences.getString("calibrationParams", "");
+        String parameters = sharedPreferences.getString(IW_CALIBRATION_PARAMETER, "");
         Gson g = new Gson();
-        parameters = parameters + g.toJson(calibrationParameter) + ";";
-        sharedPreferences.edit().putString("calibrationParams", parameters).apply();
+        parameters = parameters + g.toJson(IWCalibrationParameter) + ";";
+        sharedPreferences.edit().putString(IW_CALIBRATION_PARAMETER, parameters).apply();
     }
 
-    public static void removeAllCalibrationParameter(Context context) {
+    public static void removeIWAllCalibrationParameter(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString("calibrationParams", "").apply();
+        sharedPreferences.edit().putString(IW_CALIBRATION_PARAMETER, "").apply();
     }
 
-    public static CalibrationParameter[] getAllCalibrationParameters(Context context) {
+    public static IWCalibrationParameter[] getAllIWCalibrationParameters(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
-        String parameters = sharedPreferences.getString("calibrationParams", "");
+        String parameters = sharedPreferences.getString(IW_CALIBRATION_PARAMETER, "");
         if(parameters.equals(""))
             return null;
         else {
             String[] parameterArray = parameters.split(";");
             int len = parameterArray.length;
-            CalibrationParameter[] calibrationParameterArray = new CalibrationParameter[len];
+            IWCalibrationParameter[] IWCalibrationParameterArray = new IWCalibrationParameter[len];
             Gson gson = new Gson();
             for(int i = len-1; i>=0; i--) {
-                calibrationParameterArray[i] = gson.fromJson(parameterArray[i], CalibrationParameter.class);
+                IWCalibrationParameterArray[i] = gson.fromJson(parameterArray[i], IWCalibrationParameter.class);
             }
-            return calibrationParameterArray;
+            return IWCalibrationParameterArray;
         }
     }
 

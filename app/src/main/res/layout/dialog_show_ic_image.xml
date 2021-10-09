@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/icImageView"
+        android:layout_margin="3dp"
+        android:padding="3dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/icImageView"
+        android:id="@+id/edtTxtConc"
+        android:layout_margin="3dp"
+        android:inputType="numberDecimal"
+        android:hint="@string/concentration" />
+
+</RelativeLayout>

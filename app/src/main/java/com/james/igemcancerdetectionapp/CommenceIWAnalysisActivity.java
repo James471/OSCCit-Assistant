@@ -10,7 +10,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+
 import androidx.exifinterface.media.ExifInterface;
+
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.ParcelFileDescriptor;
@@ -41,18 +43,18 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CommenceAnalysisActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public class CommenceIWAnalysisActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     ImageView imageView;
     Uri fullImageUri;
     Bitmap fullImage;
     Bitmap croppedImage;
-    CalibrationParameter chosenParameter;
-    CalibrationParameter[] parameters;
+    IWCalibrationParameter chosenParameter;
+    IWCalibrationParameter[] parameters;
     ProgressBar progressBar;
 
     ActivityResultLauncher<Intent> imagePickLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), activityResult -> {
-        if(activityResult.getResultCode() == Activity.RESULT_OK) {
+        if (activityResult.getResultCode() == Activity.RESULT_OK) {
             Intent resultData = activityResult.getData();
             if (resultData != null) {
                 fullImageUri = resultData.getData();
@@ -86,7 +88,7 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
     });
 
     ActivityResultLauncher<String> requestStoragePermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if(isGranted) {
+        if (isGranted) {
             Intent chooseImage = new Intent(Intent.ACTION_GET_CONTENT);
             chooseImage.setType("image/*");
             chooseImage = Intent.createChooser(chooseImage, "Pick an image");
@@ -109,7 +111,7 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_commence_analysis);
+        setContentView(R.layout.activity_commence_iwanalysis);
 
         imageView = findViewById(R.id.analysisImageView);
 
@@ -134,7 +136,7 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
 
     protected void checkAndRequestStoragePermissions() {
 
-        if(ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestStoragePermissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE);
         } else {
             Intent chooseImage = new Intent(Intent.ACTION_GET_CONTENT);
@@ -145,45 +147,35 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
 
     }
 
-    protected int exifToDegrees(int exifOrientation) {
-        if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_90)
-            return 90;
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180)
-            return 180;
-        else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270)
-            return 270;
-        return 0;
-    }
-
     protected void showChooseCalibrationParameterDialog() {
-        parameters = CalibrationParameter.getAllCalibrationParameters(this);
+        parameters = IWCalibrationParameter.getAllIWCalibrationParameters(this);
         final View customLayout = getLayoutInflater().inflate(R.layout.dilog_get_calibration_parameter, null);
         Spinner spinner = customLayout.findViewById(R.id.spinnerParamList);
         List<String> spinnerArray = new ArrayList<>();
-        if(parameters!=null) {
-            for (CalibrationParameter parameter : parameters) {
+        if (parameters != null) {
+            for (IWCalibrationParameter parameter : parameters) {
                 spinnerArray.add(parameter.getName());
             }
         }
         ArrayAdapter<String> spinnerArrayAdapter = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, spinnerArray);
         spinner.setAdapter(spinnerArrayAdapter);
         spinner.setOnItemSelectedListener(this);
-        Button button = customLayout.findViewById(R.id.btnCreateParam);
-        AlertDialog.Builder builder = new AlertDialog.Builder(CommenceAnalysisActivity.this);
+        Button createNewButton = customLayout.findViewById(R.id.btnCreateParam);
+        AlertDialog.Builder builder = new AlertDialog.Builder(CommenceIWAnalysisActivity.this);
         builder.setView(customLayout);
         builder.setPositiveButton("Continue", (dialog, which) -> {
-            if(chosenParameter!=null) {
+            if (chosenParameter != null) {
                 progressBar.setVisibility(View.VISIBLE);
                 ExifInterface exifInterface;
                 try {
                     InputStream inputStream = getContentResolver().openInputStream(fullImageUri);
                     exifInterface = new ExifInterface(inputStream);
-                    int rotation = exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
+                    int rotation = Analysis.exifToDegrees(exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL));
                     Rect rect = chosenParameter.getCalibrationRectangle();
                     Matrix matrix = new Matrix();
                     matrix.postRotate(rotation);
                     fullImage = Bitmap.createScaledBitmap(fullImage, chosenParameter.getBitmapWidth(), chosenParameter.getBitmapHeight(), true);
-                    croppedImage = Bitmap.createBitmap(fullImage, rect.left, rect.top, rect.right-rect.left, rect.bottom-rect.top, matrix, true);
+                    croppedImage = Bitmap.createBitmap(fullImage, rect.left, rect.top, rect.right - rect.left, rect.bottom - rect.top, matrix, true);
                     Glide.with(getApplicationContext())
                             .load(croppedImage)
                             .addListener(new RequestListener<Drawable>() {
@@ -207,20 +199,20 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
                     Toast.makeText(getApplicationContext(), "An error occurred.", Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Choose a calibration parameter", Toast.LENGTH_LONG).show();
             }
         });
         builder.setNegativeButton("Cancel", (dialog, which) -> {
-            if(chosenParameter==null)
+            if (chosenParameter == null)
                 findViewById(R.id.showResultsBtn).setEnabled(false);
             dialog.dismiss();
         });
         final AlertDialog alertDialog = builder.create();
-        button.setOnClickListener(v -> {
+        createNewButton.setOnClickListener(v -> {
             alertDialog.dismiss();
-            Intent intent = new Intent(CommenceAnalysisActivity.this, NewCalibrationParameterActivity.class);
+            Intent intent = new Intent(CommenceIWAnalysisActivity.this, NewCalibrationParameterActivity.class);
+            intent.putExtra("type", "IW");
             startActivity(intent);
         });
         alertDialog.show();
@@ -234,7 +226,7 @@ public class CommenceAnalysisActivity extends AppCompatActivity implements Adapt
         int i1 = Analysis.getMaxInRange(calibrationArray, 600, 700).first;
         int i2 = Analysis.getMaxInRange(calibrationArray, 900, 1000).first;
         float[] xNorm = Analysis.getXNorm(i1, i2, 546.5f, 611.6f, calibrationArray.length);
-        Intent intent = new Intent(this, AnalysisResultsActivity.class);
+        Intent intent = new Intent(this, IWAnalysisResultsActivity.class);
         intent.putExtra("xNorm", xNorm);
         intent.putExtra("sampleConvolution", convolution);
         progressBar.setVisibility(View.GONE);
