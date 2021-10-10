@@ -7,23 +7,20 @@
     android:orientation="vertical"
     tools:context=".ICAnalysisResultsActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/here_s_what_we_got" />
-
-
     <com.github.mikephil.charting.charts.CombinedChart
         android:id="@+id/icResultPlot"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:padding="5dp"
+        android:layout_margin="10dp"
         android:minHeight="200dp"
         android:layout_weight="0.3"/>
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="3dp"
+        android:layout_margin="10dp"
+        android:textColor="@color/black"
         android:id="@+id/icAnalysisResultTxtVw" />
 
 </LinearLayout>

@@ -144,8 +144,10 @@ public class CommenceICAnalysisActivity extends AppCompatActivity implements Ada
 
     @SuppressLint("SetTextI18n")
     protected void addCurrentEntry(float average, float concentration) {
-        knownIntensities.add(average);
-        knownConcentrations.add(concentration);
+        if(concentration!=-100) {
+            knownIntensities.add(average);
+            knownConcentrations.add(concentration);
+        }
 
         LinearLayout tableScrollView = findViewById(R.id.tableScrollView);
 
@@ -163,7 +165,10 @@ public class CommenceICAnalysisActivity extends AppCompatActivity implements Ada
         entryLayout.addView(averageTextView);
 
         TextView concentrationTextView = new TextView(this);
-        concentrationTextView.setText(Float.toString(concentration));
+        if(concentration!=-100)
+            concentrationTextView.setText(Float.toString(concentration));
+        else
+            concentrationTextView.setText("?");
         concentrationTextView.setLayoutParams(textViewParams);
 
         entryLayout.removeAllViews();
@@ -214,6 +219,9 @@ public class CommenceICAnalysisActivity extends AppCompatActivity implements Ada
             } else {
                 unknownSampleIntensity = Analysis.getGrayBitmapAverage(croppedImage);
                 Toast.makeText(this, "Image obtained", Toast.LENGTH_LONG).show();
+                addCurrentEntry(unknownSampleIntensity, -100);
+                findViewById(R.id.btnAddImage).setEnabled(false);
+                findViewById(R.id.btnAddUnknownSampleImage).setEnabled(false);
                 findViewById(R.id.btnGetConc).setEnabled(true);
             }
         });

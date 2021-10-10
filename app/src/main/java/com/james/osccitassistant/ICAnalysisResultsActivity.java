@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.data.CombinedData;
@@ -54,9 +55,14 @@ public class ICAnalysisResultsActivity extends AppCompatActivity {
         entry2.add(new Entry(concentrations[concentrations.length-1], m*concentrations[concentrations.length-1]+c));
 
         ScatterDataSet scatterDataSet = new ScatterDataSet(entry1, "Data Points");
-        scatterDataSet.setColor(R.color.green);
+        int greenColor = ContextCompat.getColor(this, R.color.green);
+        scatterDataSet.setColor(greenColor);
         LineDataSet lineDataSet = new LineDataSet(entry2, "Best Fit");
-        lineDataSet.setColor(R.color.blue);
+        lineDataSet.setDrawValues(false);
+        lineDataSet.setDrawCircleHole(false);
+        lineDataSet.setDrawCircles(false);
+        int blueColor = ContextCompat.getColor(this, R.color.blue);
+        lineDataSet.setColor(blueColor);
 
         ScatterData scatterData = new ScatterData(scatterDataSet);
         LineData lineData = new LineData(lineDataSet);
@@ -65,9 +71,11 @@ public class ICAnalysisResultsActivity extends AppCompatActivity {
         combinedData.setData(scatterData);
         combinedData.setData(lineData);
         combinedChart.setData(combinedData);
+        combinedChart.getXAxis().setSpaceMax(0.1f);
+        combinedChart.getXAxis().setSpaceMin(0.1f);
 
         TextView icAnalysisResult = findViewById(R.id.icAnalysisResultTxtVw);
-        icAnalysisResult.setText("Concentration="+unknownConcentration+"\u00b1"+sigUnknownConcentration);
+        icAnalysisResult.setText("Concentration="+unknownConcentration);
 
     }
 
