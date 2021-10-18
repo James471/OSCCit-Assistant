@@ -119,11 +119,13 @@ class Analysis {
         return new Pair<>(index, max);
     }
 
-    public static float[] getXNorm(float x1, float x2, float w1, float w2, int xLen) {
+    public static float[] getCalibratedArray(int x1, int x2, int x3, float d1, float d2, float d3, int xLen) {
+        double a = ((d3 - d1) / (x3 - x1) - (d2 - d1) / (x2 - x1)) / (x3 - x2);
+        double b = (d2 - d1) / (x2 - x1) - a * (x2 + x1);
+        double c = d1 - b * x1 - a * x1 * x1;
         float[] xNorm = new float[xLen];
-        float m = (w2 - w1) / (x2 - x1);
         for (int i = 0; i < xLen; i++) {
-            xNorm[i] = m * (i - x1) + w1;
+            xNorm[i] = (float) (a * i * i + b * i + c);
         }
         return xNorm;
     }

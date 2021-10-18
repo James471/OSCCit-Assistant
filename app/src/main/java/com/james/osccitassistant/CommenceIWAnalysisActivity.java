@@ -11,6 +11,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 
+import androidx.core.util.Pair;
 import androidx.exifinterface.media.ExifInterface;
 
 import android.net.Uri;
@@ -225,9 +226,13 @@ public class CommenceIWAnalysisActivity extends AppCompatActivity implements Ada
         Bitmap grayImage = Analysis.getGrayBitmap(croppedImage);
         float[] convolution = Analysis.getGrayBitmapConvolution(grayImage, chosenParameter.getDelX(), chosenParameter.getDelY());
         float[] calibrationArray = chosenParameter.getCalibrationArray();
-        int i1 = Analysis.getMaxInRange(calibrationArray, 600, 700).first;
-        int i2 = Analysis.getMaxInRange(calibrationArray, 900, 1000).first;
-        float[] xNorm = Analysis.getXNorm(i1, i2, 546.5f, 611.6f, calibrationArray.length);
+        Pair<Integer, Float> p1 = Analysis.getMaxInRange(calibrationArray, 100, 350);
+        Pair<Integer, Float> p2 = Analysis.getMaxInRange(calibrationArray, 1000, 1200);
+        Pair<Integer, Float> p3 = Analysis.getMaxInRange(calibrationArray, 1500, 1700);
+        int pixel1 = p1.first;
+        int pixel2 = p2.first;
+        int pixel3 = p3.first;
+        float[] xNorm = Analysis.getCalibratedArray(pixel1, pixel2, pixel3, 435.12043337f, 545.4795633f, 611.01598333f, calibrationArray.length);
         Intent intent = new Intent(this, IWAnalysisResultsActivity.class);
         intent.putExtra("xNorm", xNorm);
         intent.putExtra("sampleConvolution", convolution);

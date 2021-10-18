@@ -20,7 +20,8 @@
         <activity android:name="com.james.osccitassistant.IWAnalysisResultsActivity" />
         <activity android:name="com.james.osccitassistant.NewCalibrationParameterActivity" />
         <activity android:name="com.james.osccitassistant.CommenceIWAnalysisActivity" />
-        <activity android:name="com.james.osccitassistant.MainActivity">
+        <activity android:name="com.james.osccitassistant.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

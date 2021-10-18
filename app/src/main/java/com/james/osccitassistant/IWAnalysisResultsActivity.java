@@ -35,6 +35,8 @@ public class IWAnalysisResultsActivity extends AppCompatActivity {
 
         LineDataSet lineDataSet = new LineDataSet(entries, "Result");
         resultChart.setData(new LineData(lineDataSet));
+        resultChart.getXAxis().setSpaceMax(0.1f);
+        resultChart.getXAxis().setSpaceMin(0.1f);
 
     }
 }
