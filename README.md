@@ -10,7 +10,7 @@ Follow [this](2021.igem.org/team:iiser_mohali) link to know more about this work
 
 1. Download and install [Android Studio](https://developer.android.com/studio).
 2. Clone this repository locally.
-3. Open android studio, then open this repository from your local storage. Android Studio will download the required gradle version and other dependencies. This could take upto 30 minutes.
+3. Open android studio, then open ```OSCCit-Assistant``` folder of this repository from your local storage. Android Studio will download the required gradle version and other dependencies. This can take upto 30 minutes.
 4. Connect your android device to your PC and enable USB debugging in your phone's settings.
 5. The name of your android device will appear in a dropdown at the top of the Android Studio window. Press the 'Run app' button next to it. This will install the app on your android device.
 
